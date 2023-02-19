@@ -5,23 +5,22 @@
 #include <midi_Namespace.h>
 #include <midi_Settings.h>
 
-
-#define LED 13  // Arduino Board LED is on Pin 13
-
 //Create an instance of the library with default name, serial port and settings
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
 
+  // Setup debugging serial and in build LED
   Serial.begin(9600);
   Serial.println("Start Midi");
+  pinMode(LED_BUILTIN, OUTPUT);
 
-  MIDI.begin(MIDI_CHANNEL_OMNI);  // Initialize the Midi Library.
+  // Initialize the Midi Library.
+  MIDI.begin(MIDI_CHANNEL_OMNI);  
 
-  MIDI.setHandleNoteOn(MyHandleNoteOn);  // This is important!! This command
-  MIDI.setHandleNoteOff(MyHandleNoteOff);  // This command tells the Midi Library
-  MIDI.setHandleProgramChange(HandleProgramChange);
+  // Handle midi events
+  MIDI.setHandleNoteOn(MyHandleNoteOn);
+  MIDI.setHandleNoteOff(MyHandleNoteOff);
   MIDI.setHandleControlChange(HandleControlChange);
 }
 
@@ -33,7 +32,11 @@ void loop() {
  * Handle Midi Note On event
  */
 void MyHandleNoteOn(byte chanel, byte pitch, byte velocity) {
-  Serial.println(" Midi on");
+  Serial.print("Midi On: ");
+  Serial.print(pitch);
+  Serial.print(" ");
+  Serial.println(velocity);
+
   digitalWrite(LED_BUILTIN, LOW);
 }
 
@@ -41,6 +44,11 @@ void MyHandleNoteOn(byte chanel, byte pitch, byte velocity) {
  * Handle Midi Note Off event
  */
 void MyHandleNoteOff(byte chanel, byte pitch, byte velocity) {
+  Serial.print("Midi off: ");
+  Serial.print(pitch);
+  Serial.print(" ");
+  Serial.println(velocity);
+
   digitalWrite(LED_BUILTIN, HIGH);
 }
 
@@ -48,7 +56,9 @@ void MyHandleNoteOff(byte chanel, byte pitch, byte velocity) {
  * Handle Midi Control Change
  */
 void HandleControlChange(byte chanel, byte number, byte value) {
+  Serial.print("Control Change: ");
   Serial.println(number);
+
   digitalWrite(LED_BUILTIN, LOW);
   delay(100);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -58,7 +68,9 @@ void HandleControlChange(byte chanel, byte number, byte value) {
  * Handle Midi Program Change
  */
 void HandleProgramChange(byte chanel, byte number, byte value) {
+  Serial.print("Program Change: ");
   Serial.println(number);
+
   digitalWrite(LED_BUILTIN, LOW);
   delay(100);
   digitalWrite(LED_BUILTIN, HIGH);
